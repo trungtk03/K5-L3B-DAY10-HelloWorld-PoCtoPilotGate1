@@ -1,0 +1,25 @@
+{
+ "collected_at": "2026-11-19T15:03:59",
+ "incident": null,
+ "run_ids": {},
+ "grade_run_id": null,
+ "criteria_hash": "d6d864a6e6cbd08f102dd11c5c1311b8f49b4d18178417be46984f97e068aa8a",
+ "round1_hash": "8a02cad930002f12a3a3c911abf5d85afc3c6628fa177d8123a76ee118508b10",
+ "code_hash": "66c6d6b85b657b34ffab2a07fed44bfe640f0882ec5b6aa2aef1698ed0782230",
+ "files": {
+  "code/guards.py": "6064f08c3d9e817fe38bdd3a563764ea905618e1229611aa968d147e730d4b21",
+  "code/guards_round1.py": "6064f08c3d9e817fe38bdd3a563764ea905618e1229611aa968d147e730d4b21",
+  "code/monitors.py": "783ecc057f06ff0b2a720734cf4295719acc93e805fda2a8a678bf7ef79ddb99",
+  "config/acceptance_criteria.json": "d6d864a6e6cbd08f102dd11c5c1311b8f49b4d18178417be46984f97e068aa8a",
+  "config/acceptance_criteria.lock": "6152d919a6eb3e6841265b5af6fb3c0dc57c6277958b513c7f16f1e82e204e7b",
+  "config/operating_gates.json": "1e14bd81aa17605c40e343950f94eafd3648d7b03b8e2a258d7d5be9a80e8602",
+  "config/operating_gates.round1.json": "1e14bd81aa17605c40e343950f94eafd3648d7b03b8e2a258d7d5be9a80e8602",
+  "config/round1.lock": "016348735864cfc1b4c7e045e40588fe2099df574a00b3e62ccf0d5133b93313",
+  "config/switches.json": "9fcdb809437346392c6ded442f4f562c357ef89a7688a454505f94bcd969866b",
+  "docs/form-a-criteria.md": "1a092f1e8c82c1cdc602d3c0a848665875ea1634ede52afcf61d35412cb736c5",
+  "docs/form-b-evaluation-gates.md": "fa0cff4147d6d4567fd4f5b4cc481c96c724f43b51b03827eac1593c441160db",
+  "docs/form-c-incident.md": "a0bcda8c4c53b002cc40c80056ae280af920b5dfd5f51d3732ca9183477b3ee6",
+  "runs/journal.jsonl": "35bd2f667e8340bc630d496e9ff43b0ee8802e3421f29de38d6f1feb848be62d",
+  "submission.json": "3958d64fa09ab42e0202f5d0c1f25b0ad549f4fb724a9d6df4777e375a6fb4fb"
+ }
+}
