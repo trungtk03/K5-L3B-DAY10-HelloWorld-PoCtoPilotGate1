@@ -5,7 +5,7 @@
 - Tên nhóm (`TenNhom`, không dấu, không khoảng trắng): HelloWorld
 - Lớp: `L3B`
 - Repo của bàn: `K5-L3B-DAY10-HelloWorld-PoCtoPilotGate1`
-- Thẻ sự cố đã bốc (S1–S8): (16h15 bốc thẻ)
+- Thẻ sự cố đã bốc (S1–S8): S2
 
 ## Thành viên
 

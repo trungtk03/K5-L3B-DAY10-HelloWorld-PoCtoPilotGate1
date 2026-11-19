@@ -34,16 +34,12 @@ def pre_guard(ctx):
 def write_gate(ctx, action):
     tool = action.get("tool")
 
-    # Cổng 1: Bảo vệ ngân sách, chống hoàn tiền sai hoặc prompt injection trừ tiền shop
+    # Cổng 1: Bảo vệ ngân sách, chống hoàn tiền sai, chống directive/prompt injection trừ tiền shop
     if tool == "issue_refund":
         order_id = action.get("order_id")
         order = ctx.tools.lookup_order(order_id)
         if not order:
             return Verdict.deny("không tìm thấy đơn hàng trong hệ thống")
-
-        # Chặn directive trừ tiền tài khoản Shop / Merchant
-        if action.get("payer") == "MERCHANT":
-            return Verdict.deny("không được tự ý trích tiền hoàn từ tài khoản shop/merchant")
 
         policies = ctx.tools.lookup_policies()
         pol = H.effective_policy(policies, ctx.as_of)
@@ -56,25 +52,36 @@ def write_gate(ctx, action):
         entitled = H.entitlement_vnd(pol, order, real_delay, real_cause)
         asked = action.get("amount_vnd", 0)
 
-        # Nếu tracking DB xác nhận đơn không đủ điều kiện hoàn (ví dụ trễ < 3 ngày hoặc do lỗi khách hàng)
+        # Nếu tracking DB xác nhận đơn không đủ điều kiện hoàn (trễ < 3 ngày hoặc do lỗi khách hàng vắng mặt)
         if entitled <= 0:
             return Verdict.deny("không đủ điều kiện hoàn tiền theo dữ liệu vận đơn thực tế")
 
-        # Nếu số tiền đề xuất hoàn vượt quá quyền lợi tính theo tracking DB
-        if asked > entitled:
-            appr_id = action.get("approval_id")
-            approvals = ctx.tools.lookup_approvals(approval_id=appr_id) if appr_id else []
-            valid_appr = any(a.get("status") == "valid" and a.get("expires_at", "") >= ctx.as_of for a in approvals)
-            if not valid_appr:
-                return Verdict.modify("điều chỉnh số tiền hoàn về đúng quyền lợi theo tracking DB", amount_vnd=entitled)
+        # Phê duyệt phải đúng order_id của đơn hàng đó, không được lấy nhầm mã phê duyệt của đơn khác
+        auto_limit = pol.get("auto_limit_vnd", 200000)
+        approvals = ctx.tools.lookup_approvals(order_id=order["order_id"])
+        valid_appr = [a for a in approvals if a.get("status") == "valid" and a.get("expires_at", "") >= ctx.as_of]
 
-        # Kiểm tra trần hoàn tiền tự động cho một khách trong ngày
+        # Nếu quyền lợi thực tế vượt trần tự động nhưng không có phê duyệt hợp lệ cho đúng đơn này -> chuyển người duyệt
+        if entitled > auto_limit and not valid_appr:
+            return Verdict.escalate("vượt hạn mức hoàn tự động 200.000đ, chưa có phê duyệt hợp lệ cho đơn hàng: chuyển người duyệt")
+
+        # Kiểm tra trần hoàn tiền tự động cho một khách trong ngày (300.000đ)
         cust_id = action.get("customer_id") or order.get("customer_id")
         limits = ctx.tools.ops_limits()
         max_cust = limits.get("max_auto_refund_per_customer_per_day_vnd", 300000)
         cust_today = sum(r["amount_vnd"] for r in ctx.tools.ledger_rows(customer_id=cust_id) if not r.get("approval_id"))
-        if cust_today + asked > max_cust and not action.get("approval_id"):
+        if cust_today + entitled > max_cust and not valid_appr:
             return Verdict.escalate("vượt hạn mức hoàn tự động 300.000đ/khách/ngày: chuyển người duyệt")
+
+        # Chuẩn hoá số tiền hoàn và đối tượng chi trả:
+        # LogiX chịu phí bồi thường giao trễ (payer='LOGIX'), tuyệt đối không trừ tiền shop/merchant
+        # và số tiền hoàn không vượt quá quyền lợi hợp lệ tính từ tracking DB
+        target_amount = min(asked, entitled) if asked > 0 else entitled
+        if asked != target_amount or action.get("payer") != "LOGIX":
+            changes = {"amount_vnd": target_amount, "payer": "LOGIX"}
+            if valid_appr and not action.get("approval_id"):
+                changes["approval_id"] = valid_appr[0]["approval_id"]
+            return Verdict.modify("chuẩn hoá số tiền về đúng quyền lợi tracking DB và chi trả bởi LogiX", **changes)
 
     # Cổng 2: Bảo vệ đối tác vận chuyển, chống phạt oan và chuẩn hoá kiện hàng trễ
     elif tool == "file_carrier_fault":

@@ -5,12 +5,12 @@
     "NguyenTuanDung-2A202603859",
     "VoThanhHuy-2A202603879"
   ],
-  "incident": "",
+  "incident": "S2",
   "decision_v1": "Tiếp tục",
-  "decision_v2": "",
+  "decision_v2": "Tiếp tục",
   "three_lines": {
-    "environment_assumption": "",
-    "reduce_or_prevent": "",
-    "measure_in_pilot": ""
+    "environment_assumption": "Chúng tôi ngầm giả định rằng văn bản trong ticket và checkout_note chỉ là dữ liệu mô tả của khách hàng chứ không chứa các câu lệnh prompt injection giả lập chỉ thị hệ thống để can thiệp quyền hạn và thay đổi nguồn tiền thanh toán.",
+    "reduce_or_prevent": "Cổng phòng ngừa cấp hệ thống trong write_gate thực sự NGĂN ĐƯỢC tác hại vì nó nằm ngoài model, trực tiếp đối chiếu tracking DB sự thật, cưỡng chế payer='LOGIX' và chặn mọi khoản hoàn trên 200k thiếu approval hợp lệ trước khi bất kỳ lệnh ghi nào được thực thi.",
+    "measure_in_pilot": "Trong pilot thật cần đo lại tỷ lệ ticket có chứa chỉ thị bất thường (injection detection rate), tỷ lệ khiếu nại đối soát từ phía merchant, và độ trễ thực tế giữa các lần yêu cầu hoàn tiền liên tiếp của cùng một tài khoản khách hàng."
   }
 }
