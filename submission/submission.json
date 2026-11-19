@@ -1,8 +1,12 @@
 {
-  "team": "",
-  "members": [],
+  "team": "K5-L3B-DAY10-HelloWorld-PoCtoPilotGate1",
+  "members": [
+    "NguyenHoangTrung-2A202603826",
+    "NguyenTuanDung-2A202603859",
+    "VoThanhHuy-2A202603879"
+  ],
   "incident": "",
-  "decision_v1": "",
+  "decision_v1": "Tiếp tục",
   "decision_v2": "",
   "three_lines": {
     "environment_assumption": "",
